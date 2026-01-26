@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: visionhub-backend
+  labels:
+    app: visionhub-backend
+    environment: {{ .Values.environment }}
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: visionhub-backend
+  template:
+    metadata:
+      labels:
+        app: visionhub-backend
+        environment: {{ .Values.environment }}
+    spec:
+      imagePullSecrets:
+      - name: thalassa-registry
+      containers:
+      - name: backend
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - name: http
+          containerPort: {{ .Values.service.port }}
+          protocol: TCP
+        env:
+        # App Configuration
+        - name: APP_NAME
+          value: {{ .Values.app.name | quote }}
+        - name: DEBUG
+          value: {{ .Values.app.debug | quote }}
+        
+        # Security (from Secret)
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: visionhub-backend-secrets
+              key: secret-key
+        - name: JWT_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: visionhub-backend-secrets
+              key: jwt-secret-key
+        - name: JWT_ALGORITHM
+          value: {{ .Values.app.jwtAlgorithm | quote }}
+        - name: JWT_EXPIRATION_MINUTES
+          value: {{ .Values.app.jwtExpirationMinutes | quote }}
+        
+        # Database (from Secret)
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: visionhub-backend-secrets
+              key: database-url
+        
+        # S3/Object Storage
+        - name: S3_ENDPOINT
+          value: {{ .Values.s3.endpoint | quote }}
+        - name: S3_BUCKET
+          value: {{ .Values.s3.bucket | quote }}
+        - name: S3_PUBLIC_URL
+          value: {{ .Values.s3.publicUrl | quote }}
+        - name: S3_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: visionhub-backend-secrets
+              key: s3-access-key
+        - name: S3_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: visionhub-backend-secrets
+              key: s3-secret-key
+        
+        livenessProbe:
+          {{- toYaml .Values.livenessProbe | nindent 10 }}
+        
+        readinessProbe:
+          {{- toYaml .Values.readinessProbe | nindent 10 }}
+        
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}

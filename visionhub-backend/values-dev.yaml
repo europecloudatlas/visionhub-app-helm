@@ -1,0 +1,66 @@
+# Image
+image:
+  repository: registry.nl-01.thalassa.cloud/visionhub-dev/visionhub-backend
+  tag: dev-latest
+  pullPolicy: Always
+
+# Replicas
+replicas: 1
+
+# Environment
+environment: dev
+
+# Service
+service:
+  type: ClusterIP
+  port: 8000
+
+# Ingress
+ingress:
+  enabled: true
+  host: visionhub-api-dev.europecloudatlas.com
+  tlsSecretName: visionhub-api-dev-tls
+
+# Database
+database:
+  host: "10.0.20.3"
+  port: 5432
+  name: "visionhub"
+  user: "visionhub"
+
+# S3/Object Storage
+s3:
+  endpoint: "https://objects.nl-01.thalassa.cloud"
+  bucket: "visionboard-media-dev"
+  publicUrl: "https://objects.nl-01.thalassa.cloud/visionboard-media-dev"
+
+# App Config
+app:
+  name: "VisionHub"
+  debug: true
+  jwtAlgorithm: "HS256"
+  jwtExpirationMinutes: 1440
+
+# Resources
+resources:
+  limits:
+    cpu: 250m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+# Health checks
+livenessProbe:
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 20
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 10
+  periodSeconds: 5
