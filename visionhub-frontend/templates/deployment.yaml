@@ -4,6 +4,7 @@ metadata:
   name: visionhub-frontend
   labels:
     app: visionhub-frontend
+    environment: {{ .Values.environment }}
 spec:
   replicas: {{ .Values.replicas }}
   selector:
@@ -13,7 +14,11 @@ spec:
     metadata:
       labels:
         app: visionhub-frontend
+        environment: {{ .Values.environment }}
     spec:
+      imagePullSecrets:
+      - name: thalassa-registry
+      
       containers:
       - name: frontend
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
@@ -21,17 +26,20 @@ spec:
         ports:
         - containerPort: 80
           name: http
+        
         livenessProbe:
           httpGet:
             path: /health
             port: http
           initialDelaySeconds: 10
           periodSeconds: 10
+        
         readinessProbe:
           httpGet:
             path: /health
             port: http
           initialDelaySeconds: 5
           periodSeconds: 5
+        
         resources:
           {{- toYaml .Values.resources | nindent 10 }}
