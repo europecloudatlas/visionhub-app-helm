@@ -45,10 +45,10 @@ app:
 resources:
   limits:
     cpu: 250m
-    memory: 256Mi
+    memory: 512Mi    # ← Povećaj sa 256Mi na 512Mi
   requests:
     cpu: 100m
-    memory: 128Mi
+    memory: 256Mi    # ← Povećaj sa 128Mi na 256Mi
 
 # Health checks
 livenessProbe:
