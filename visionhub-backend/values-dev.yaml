@@ -1,66 +1,46 @@
-# Image
+# Default values for visionhub-backend
+
+# Environment (dev/staging/prod)
+environment: dev
+
+# Image configuration
 image:
   repository: registry.nl-01.thalassa.cloud/visionhub-dev/visionhub-backend
   tag: latest
   pullPolicy: Always
 
-# Replicas
+# Replica count
 replicas: 1
 
-# Environment
-environment: dev
+# Application configuration
+app:
+  name: VisionHub
+  debug: true
+  jwtAlgorithm: HS256
+  jwtExpirationMinutes: 1440
 
-# Service
+# S3/Object Storage configuration
+s3:
+  endpoint: https://objects.nl-01.thalassa.cloud
+  bucket: visionboard-media-dev
+  publicUrl: https://objects.nl-01.thalassa.cloud/visionboard-media-dev
+
+# Service configuration
 service:
   type: ClusterIP
   port: 8000
 
-# Ingress
+# Ingress configuration
 ingress:
   enabled: true
   host: visionhub-api-dev.europecloudatlas.com
   tlsSecretName: visionhub-api-dev-tls
 
-# Database
-database:
-  host: "10.0.20.3"
-  port: 5432
-  name: "visionhub"
-  user: "visionhub"
-
-# S3/Object Storage
-s3:
-  endpoint: "https://objects.nl-01.thalassa.cloud"
-  bucket: "visionboard-media-dev"
-  publicUrl: "https://objects.nl-01.thalassa.cloud/visionboard-media-dev"
-
-# App Config
-app:
-  name: "VisionHub"
-  debug: true
-  jwtAlgorithm: "HS256"
-  jwtExpirationMinutes: 1440
-
-# Resources
+# Resource limits and requests
 resources:
   limits:
-    cpu: 250m
-    memory: 512Mi    # ← Povećaj sa 256Mi na 512Mi
+    cpu: 500m
+    memory: 512Mi
   requests:
     cpu: 100m
-    memory: 256Mi    # ← Povećaj sa 128Mi na 256Mi
-
-# Health checks
-livenessProbe:
-  httpGet:
-    path: /health
-    port: http
-  initialDelaySeconds: 20
-  periodSeconds: 10
-
-readinessProbe:
-  httpGet:
-    path: /health
-    port: http
-  initialDelaySeconds: 10
-  periodSeconds: 5
+    memory: 256Mi

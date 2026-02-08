@@ -1,3 +1,6 @@
+# Environment
+environment: dev
+
 # Image
 image:
   repository: registry.nl-01.thalassa.cloud/visionhub-dev/visionhub-frontend
@@ -7,8 +10,9 @@ image:
 # Replicas
 replicas: 1
 
-# Environment
-environment: dev
+# Frontend configuration
+frontend:
+  apiUrl: https://visionhub-api-dev.europecloudatlas.com
 
 # Service
 service:
@@ -19,13 +23,13 @@ service:
 ingress:
   enabled: true
   host: visionhub-dev.europecloudatlas.com
-  tlsSecretName: visionhub-dev-tls
+  tlsSecretName: visionhub-frontend-dev-tls
 
 # Resources
 resources:
   limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
     cpu: 100m
     memory: 128Mi
-  requests:
-    cpu: 50m
-    memory: 64Mi
